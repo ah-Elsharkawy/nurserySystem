@@ -48,7 +48,7 @@ server.use((req, res)=>{
 
 // Error middleware
 server.use((err, req, res, next)=>{
-    res.status(500).json({message:"Internal server Error"});
+    res.status(500).json({message:err.message});
 })
 
 

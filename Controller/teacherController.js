@@ -1,5 +1,18 @@
 const Teacher = require("../Model/teacherSchema.js");
 
+const fs = require('fs').promises;
+const path = require('path');
+
+async function deleteFile(filePath) {
+    try {
+        await fs.unlink(filePath);
+        console.log('File deleted successfully');
+    } catch (err) {
+        console.error('Error deleting file:', err);
+    }
+}
+
+
 module.exports.getTeachers = [(req, res, next)=>{
     let authorized = true;
     if(!authorized)
@@ -12,21 +25,37 @@ module.exports.getTeachers = [(req, res, next)=>{
 ]
 
 module.exports.addTeacher = (req, res)=>{
+    console.log(req.file)
+    let imgPath = "NoImage";
+
+    if(req.file)
+        imgPath = req.file.path;
+    
+    let {fullName, email, password} = req.body;
+    console.log(imgPath, fullName, email, password);
     const newTeacher = new Teacher({
-        fullName : "AhmedElsharkawy",
-        email: "aelsharkawy5@gmail.com",
-        password: "1234",
-        Image: "imgString"
+        fullName : fullName,
+        email: email,
+        password: password,
+        image: imgPath
     })
+
+
 
     newTeacher.save()
     .then(()=>{
-        console.log("user saved!")
+        console.log("user saved!");
+        res.status(201).json({message: "added teacher"});
     })
     .catch(()=>{
-        console.log("failed, teacher isn't saved")
+        console.log("failed, teacher isn't saved");
+        // delete the picture
+        if(imgPath !== "NoImage")
+            deleteFile(`${imgPath}`);
+
+        res.status(400).json({message: "failed"})
     })
-    res.status(201).json({message: "added teacher"})
+    
 }
 
 module.exports.updateTeachers = (req, res)=>{
