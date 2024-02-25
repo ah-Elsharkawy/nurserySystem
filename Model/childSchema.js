@@ -3,18 +3,19 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const addressSchema = mongoose.Schema({
     city: {type: String},
-    street: {type: Number},
+    street: {type: String},
     building: {type: Number}
-})
+},
+{_id: false})
 
 
 const Schema = mongoose.Schema({
-    _id: {type: Number, unique: true},
+    cid: {type: Number, unique: true},
     fullName: {type: String,  required: true},
     age: {type: Number, required: true},
     level: {type: String, enum:["PreKG", "KG1", "KG2"], required: true},
     address: addressSchema
 })
 
-Schema.plugin(AutoIncrement);
+Schema.plugin(AutoIncrement, { inc_field: 'cid' });
 module.exports = mongoose.model("children", Schema);

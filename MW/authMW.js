@@ -23,7 +23,7 @@ module.exports = async(req, res, next) => {
 }
 
 module.exports.isAdmin = (req, res, next) =>{
-    if(req.token.role != "admin")
+    if(req.token.role != "teacher")
     {
         let err = new Error("Unauthorized");
         err.statusCode = 403;

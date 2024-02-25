@@ -15,20 +15,10 @@ async function deleteFile(filePath) {
 }
 
 
-module.exports.getTeachers = [async (req, res, next)=>{
-    let token = req.get("authorization").split(" ")[1];
-    
-    token = jwt.decode(token, process.env.SECRET_KEY);
-    console.log(token);
-    
-    if(!token || token.role != "teacher") // later will be admin only
-        res.status(401).json({message: "Not authorized"});
-    next();
-},
-async (req, res)=>{
+module.exports.getTeachers = async (req, res)=>{
     res.status(200).json({teachers: await Teacher.find({})})
 }
-]
+
 
 module.exports.addTeacher = async(req, res)=>{
 

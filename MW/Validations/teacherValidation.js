@@ -10,15 +10,15 @@ let validateTeacherData = [
       .withMessage("Invalid email"),
 
     body("password")
-      .trim()
       .notEmpty().withMessage("password is required")
       .isStrongPassword()
       .withMessage('Password must be 8 chars long containing lowercase, uppercase, number, and special character'),
 
     body("fullName")
-      .trim()
       .notEmpty().withMessage("FullName is required")
       .isString()
+      .withMessage("name must be a string")
+      .isLength({min:3})
       .withMessage("FullName must be string and at least 3 characters"),
 ];
 
