@@ -77,16 +77,43 @@ module.exports.updateTeachers = async(req, res, next)=>{
         try{
             let {fullName, email, password} = req.body;
             email = email.toLowerCase();
-
+            password = await bcrypt.hash(password, 10);
             let teacherOldData = await Teacher.findOne({_id: req.params.id});
-            // still didnt complete this function
+            if(email !== teacherOldData.email)
+            {
+                if(await Teacher.findOne({email: email}))
+                {
+                    throw new Error("email already in use");
+                }
+                
+                await Teacher.findOneAndUpdate({_id: req.params.id}, 
+                    {
+                        _id: +req.params.id,
+                        email: email,
+                        password: password,
+                        fullName: fullName
+                    });
+                res.status(201).json(await Teacher.findById(req.params.id));
+            }
+            else
+            {
+                await Teacher.findOneAndUpdate({_id: req.params.id}, 
+                    {
+                        _id: +req.params.id,
+                        email: email,
+                        password: password,
+                        fullName: fullName
+                    });
+                res.status(201).json(await Teacher.findById(req.params.id));
+            }
+            
         }
         catch(err)
         {
-
+            next(err);
         }
     }
-    res.status(201).json({message: `update teacher ${req.params.id}`});
+    next(new Error("Unauthorized"));
 }
 
 module.exports.getTeacherById = async(req, res)=>{
@@ -120,8 +147,7 @@ module.exports.deleteTeacherById = async(req, res, next)=>{
         err.message = "not found";
         err.status = 404;
         next(err);
-    }
-    
+    } 
 }
 
 module.exports.getTeacherSupervisors = (req, res)=>{

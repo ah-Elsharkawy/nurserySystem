@@ -13,9 +13,10 @@ router.route("/teachers")
 .post(authMW.isAdmin, upload.single('image') ,validateTeacherData, validator, addTeacher)
 
 router.route("/teachers/:id")
-.get(validateIdParam, validator, getTeacherById)
-.delete(validateIdParam, authMW.isAdmin, deleteTeacherById)
-.patch(validateIdParam, upload.single('image') ,validateTeacherData, validator, updateTeachers)
+.all(validateIdParam, validator)
+.get(getTeacherById)
+.delete(authMW.isAdmin, deleteTeacherById)
+.patch(validateTeacherData, validator, updateTeachers)
 
 router.get("/teachers/supervisors", getTeacherSupervisors)
 
