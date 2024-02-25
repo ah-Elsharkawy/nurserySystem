@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -17,7 +18,7 @@ let portNumber = process.env.PORT || 8080;
 
 
 // connenct to the db then the server
-mongoose.connect("mongodb://127.0.0.1:27017/nurserydb")
+mongoose.connect(process.env.DB_URL)
 .then(()=>{
     console.log("conected to the db");
     server.listen(portNumber, ()=>{

@@ -15,7 +15,6 @@ let login = async (req, res) => {
         (teacher) => {
             if(!teacher)
             {
-                console.log("teacher on error" , teacher);
                 res.status(401).json("invalid email or password");
             }
             else
@@ -26,8 +25,6 @@ let login = async (req, res) => {
 
                 res.status(200).json({token: token});
             }
-                
-            
         }
     )
 }

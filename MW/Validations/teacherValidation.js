@@ -1,6 +1,6 @@
 const {body, check} = require("express-validator");
 
-addValidation = [
+addTeacherValidation = [
     check("email")
       .trim()
       .isEmail()
@@ -12,10 +12,10 @@ addValidation = [
       .trim()
       .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
       .withMessage('Password must contain lowercase, uppercase, number, and special character'),
-    body("fullname")
+    body("fullName")
       .trim()
       .isString()
-      .withMessage("Fullname must be string and at least 3 characters"),
+      .withMessage("FullName must be string and at least 3 characters"),
   ]
 
-module.exports = {addValidation};
+module.exports = {addTeacherValidation};
