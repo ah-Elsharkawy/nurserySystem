@@ -1,4 +1,6 @@
 const Teacher = require("../Model/teacherSchema.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -13,40 +15,53 @@ async function deleteFile(filePath) {
 }
 
 
-module.exports.getTeachers = [(req, res, next)=>{
-    let authorized = true;
-    if(!authorized)
+module.exports.getTeachers = [async (req, res, next)=>{
+    let token = req.get("authorization").split(" ")[1];
+    
+    token = jwt.decode(token, process.env.SECRET_KEY);
+    console.log(token);
+    
+    if(!token || token.role != "teacher") // later will be admin only
         res.status(401).json({message: "Not authorized"});
     next();
 },
-(req, res)=>{
-    res.status(200).json({message: "all teachers"})
+async (req, res)=>{
+    res.status(200).json({teachers: await Teacher.find({})})
 }
 ]
 
-module.exports.addTeacher = (req, res)=>{
-    let imgPath = "NoImage";
+module.exports.addTeacher = async(req, res)=>{
 
+    let imgPath = "NoImage";
     if(req.file)
         imgPath = req.file.path;
-    
+
     let {fullName, email, password} = req.body;
-    console.log(imgPath, fullName, email, password);
+    email = email.toLowerCase();
+
+    password = await bcrypt.hash(password, 10);
     const newTeacher = new Teacher({
         fullName : fullName,
         email: email,
         password: password,
         image: imgPath
     })
-    
+
+    if(await Teacher.findOne({email: email}))
+    {
+        if(imgPath !== "NoImage")
+            deleteFile(`${imgPath}`);
+
+        res.status(400).json({message: "user already exist"});
+        return;
+    }
+
     newTeacher.save()
     .then(()=>{
         console.log("user saved!");
         res.status(201).json({message: "added teacher"});
     })
     .catch(()=>{
-        console.log("failed, teacher isn't saved");
-        // delete the picture
         if(imgPath !== "NoImage")
             deleteFile(`${imgPath}`);
 
@@ -55,16 +70,58 @@ module.exports.addTeacher = (req, res)=>{
     
 }
 
-module.exports.updateTeachers = (req, res)=>{
-    res.status(201).json({message: "updates teacher"});
+// still didnt complete this function
+module.exports.updateTeachers = async(req, res, next)=>{
+    if(req.token.role === "admin" || req.token._id === +req.params.id)
+    {
+        try{
+            let {fullName, email, password} = req.body;
+            email = email.toLowerCase();
+
+            let teacherOldData = await Teacher.findOne({_id: req.params.id});
+            // still didnt complete this function
+        }
+        catch(err)
+        {
+
+        }
+    }
+    res.status(201).json({message: `update teacher ${req.params.id}`});
 }
 
-module.exports.getTeacherById = (req, res)=>{
-    res.status(200).json({message: `teacher ID: ${req.params.id}`});
+module.exports.getTeacherById = async(req, res)=>{
+
+    if(req.token.role === 'admin' || req.token._id === +req.params.id)
+    {
+        try{
+            let teacher = await Teacher.findOne({_id: req.params.id});
+            res.status(200).json({teacher});
+        }
+        catch(err)
+        {
+            throw new Error("user doesn't exist");
+        }
+    }
+    else
+    {
+        res.status(401).json({message: "Unauthorized"});
+    }
 }
 
-module.exports.deleteTeacherById = (req, res)=>{
-    res.status(204).json({message: `deleted teacher: ${req.params.id}`});
+module.exports.deleteTeacherById = async(req, res, next)=>{
+    try{
+        let teacher = await Teacher.findOneAndDelete({_id: req.params.id});
+        if(!teacher)
+            throw new Error();
+            res.status(204).json({message: `deleted teacher: ${req.params.id}`});
+    }
+    catch(err)
+    {
+        err.message = "not found";
+        err.status = 404;
+        next(err);
+    }
+    
 }
 
 module.exports.getTeacherSupervisors = (req, res)=>{

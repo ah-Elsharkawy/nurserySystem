@@ -13,7 +13,8 @@ const validator = require("./MW/Validations/validator");
 const { addTeacher } = require("./Controller/teacherController");
 const swaggerUi = require("swagger-ui-express");
 const autoGenerate = require("swagger-autogen")();
-const swaggerDocument = require("./swagger-output.json")
+const swaggerDocument = require("./swagger-output.json");
+const authMW = require("./MW/authMW");
 let portNumber = process.env.PORT || 8080;
 
 
@@ -46,6 +47,7 @@ server.use(express.urlencoded({extended: true}));
 //routes
 
 server.use(AuthRoute);
+server.use(authMW);
 server.use(teachersRoutes);
 server.use(classesRoutes);
 server.use(childrenRoutes);

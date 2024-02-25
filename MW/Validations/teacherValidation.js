@@ -1,21 +1,34 @@
 const {body, check} = require("express-validator");
 
-addTeacherValidation = [
-    check("email")
+let validateTeacherData = [
+    body("email")
       .trim()
-      .isEmail()
+      .notEmpty().withMessage("Email is required")
       .custom(value => {
         return value.toLowerCase()})
+      .isEmail()
       .withMessage("Invalid email"),
-      
+
     body("password")
       .trim()
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-      .withMessage('Password must contain lowercase, uppercase, number, and special character'),
+      .notEmpty().withMessage("password is required")
+      .isStrongPassword()
+      .withMessage('Password must be 8 chars long containing lowercase, uppercase, number, and special character'),
+
     body("fullName")
       .trim()
+      .notEmpty().withMessage("FullName is required")
       .isString()
       .withMessage("FullName must be string and at least 3 characters"),
-  ]
+];
 
-module.exports = {addTeacherValidation};
+let getAllTeachersValidation = [
+    check().custom((value, {req}) => {
+        console.log(req.headers);
+        if(!req.headers.authorization || !req.headers.authorization.startsWith("Bearer"))
+            throw new Error("login first");
+        return true;
+    })
+]
+
+module.exports = {validateTeacherData, getAllTeachersValidation};

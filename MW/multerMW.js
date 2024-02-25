@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
         cb(null, "Images");
     },
     filename: (req, file, cb) => {
-        console.log(file);
+        //console.log(file);
         cb(null, Date.now() +path.extname(file.originalname));
     }
 })
@@ -19,7 +19,6 @@ function fileFilter(req, file, cb) {
     file.mimetype == "image/png"
   ) {
     console.log("right format");
-    console.log(req.body)
     cb(null, true);
   } else {
     cb(null, false);

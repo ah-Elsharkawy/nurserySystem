@@ -6,24 +6,30 @@ const bcrypt = require("bcrypt")
 let login = async (req, res) => {
     let {email, password} = req.body;
 
-    let hashedPass = 
-    await bcrypt.hash(password, 10);
-    console.log(hashedPass);
-    //console.log(bcrypt.hash(password, 10).then((pass) => console.log(pass)));
-    Teacher.findOne({email: email, password: password})
+    email = email.toLowerCase();
+
+    Teacher.findOne({email: email})
     .then(
-        (teacher) => {
+        async(teacher) => {
             if(!teacher)
             {
                 res.status(401).json("invalid email or password");
             }
             else
             {
-                let result = bcrypt.compare(password, hashedPass).then((res)    =>console.log(res))
-                let token = jwt.sign({_id: teacher._id, role: "teacher"},
-                process.env.SECRET_KEY);
+                let result = await bcrypt.compare(password, teacher.password);
+                if(!result)
+                {
+                    
+                    res.status(401).json("invalid email or password");
+                }
+                else
+                {
+                    let token = jwt.sign({_id: teacher._id, role: "teacher"},
+                    process.env.SECRET_KEY);
 
-                res.status(200).json({token: token});
+                    res.status(200).json({token: token});
+                }
             }
         }
     )
