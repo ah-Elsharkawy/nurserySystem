@@ -5,7 +5,14 @@ const mongoose = require("mongoose");
 const teachersRoutes = require("./Route/teacherRoutes");
 const classesRoutes = require("./Route/classesRoutes");
 const childrenRoutes = require("./Route/childsRoutes");
+const AuthRoute = require("./Route/authenticationRoute");
 const server = express();
+const {addValidation} = require("./MW/Validations/teacherValidation");
+const validator = require("./MW/Validations/validator");
+const { addTeacher } = require("./Controller/teacherController");
+const swaggerUi = require("swagger-ui-express");
+const autoGenerate = require("swagger-autogen")();
+const swaggerDocument = require("./swagger-output.json")
 let portNumber = process.env.PORT || 8080;
 
 
@@ -22,6 +29,9 @@ mongoose.connect("mongodb://127.0.0.1:27017/nurserydb")
 })
 
 
+server.use("/api-docs",
+swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 
 server.use(cors());
@@ -33,6 +43,8 @@ server.use(express.json());
 server.use(express.urlencoded({extended: true}));
 
 //routes
+
+server.use(AuthRoute);
 server.use(teachersRoutes);
 server.use(classesRoutes);
 server.use(childrenRoutes);

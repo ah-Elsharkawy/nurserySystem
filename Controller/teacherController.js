@@ -25,7 +25,6 @@ module.exports.getTeachers = [(req, res, next)=>{
 ]
 
 module.exports.addTeacher = (req, res)=>{
-    console.log(req.file)
     let imgPath = "NoImage";
 
     if(req.file)
@@ -39,9 +38,7 @@ module.exports.addTeacher = (req, res)=>{
         password: password,
         image: imgPath
     })
-
-
-
+    
     newTeacher.save()
     .then(()=>{
         console.log("user saved!");
