@@ -1,9 +1,11 @@
 const Teacher = require("../Model/teacherSchema.js");
+const Class = require("../Model/classSchema.js")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 
 const fs = require('fs').promises;
 const path = require('path');
+const { forEach } = require("../MW/Validations/teacherIdParamValidation.js");
 
 async function deleteFile(filePath) {
     try {
@@ -140,6 +142,28 @@ module.exports.deleteTeacherById = async(req, res, next)=>{
     } 
 }
 
-module.exports.getTeacherSupervisors = (req, res)=>{
-    res.status(200).json({message: "supervisors"});
+module.exports.getTeacherSupervisors = async(req, res, next)=>{
+    try{
+        let classes = await Class.find({});
+        if(!classes)
+            throw new Error("No classes found");
+
+        let supervisors = [];
+       
+            for(let c of classes){
+                try{
+                    let teacher = await Teacher.findOne({_id: +c.supervisor});
+                    console.log(teacher)
+                    if(teacher)
+                        supervisors.push({teacher});
+                }catch(err)
+                {
+                    next(err);
+                }
+            }
+        res.status(200).json({message: "found", supervisors: supervisors});
+    }catch(err)
+    {
+        next(err);
+    }
 }

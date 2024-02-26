@@ -12,12 +12,13 @@ router.route("/teachers")
 .get(authMW.isAdmin ,getTeachers)
 .post(authMW.isAdmin, upload.single('image') ,validateTeacherData, validator, addTeacher)
 
+router.get("/teachers/supervisors", getTeacherSupervisors)
+
 router.route("/teachers/:id")
 .all(validateIdParam, validator)
 .get(getTeacherById)
 .delete(authMW.isAdmin, deleteTeacherById)
 .patch(validateTeacherData, validator, updateTeachers)
 
-router.get("/teachers/supervisors", getTeacherSupervisors)
 
 module.exports = router;

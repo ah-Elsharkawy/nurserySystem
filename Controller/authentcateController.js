@@ -20,7 +20,7 @@ let login = async (req, res) => {
                 let result = await bcrypt.compare(password, teacher.password);
                 if(!result)
                 {
-                    
+
                     res.status(401).json("invalid email or password");
                 }
                 else
