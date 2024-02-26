@@ -3,17 +3,21 @@ const router = express.Router();
 
 const {getAllClasses, getClassById, addClass, updateClasses, deleteClassById, getClassTeacher, getClassChildren} = require("../Controller/classController");
 
+const {validateClassData, checkClassIdInParams} = require("../MW/Validations/classValidation")
+
+const validator  = require("../MW/Validations/validator")
 
 router.route("/class")
 .get(getAllClasses)
-.post(addClass)
+.post(validateClassData, validator, addClass)
 
 router.route(`/class/:id`)
+.all(checkClassIdInParams, validator)
 .get(getClassById)
 .delete(deleteClassById)
-.put(updateClasses)
+.put(validateClassData, validator, updateClasses)
 
-router.get(`/classChildren/:id`, getClassChildren);
-router.get("/classTeacher/:id", getClassTeacher);
+router.get(`/classChildren/:id`,checkClassIdInParams, validator,  getClassChildren);
+router.get("/classTeacher/:id",checkClassIdInParams, validator, getClassTeacher);
 
 module.exports = router;
