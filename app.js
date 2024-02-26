@@ -12,7 +12,6 @@ const {addValidation} = require("./MW/Validations/teacherValidation");
 const validator = require("./MW/Validations/validator");
 const { addTeacher } = require("./Controller/teacherController");
 const swaggerUi = require("swagger-ui-express");
-const autoGenerate = require("swagger-autogen")();
 const swaggerDocument = require("./swagger-output.json");
 const authMW = require("./MW/authMW");
 let portNumber = process.env.PORT || 8080;
@@ -33,8 +32,6 @@ mongoose.connect(process.env.DB_URL)
 
 server.use("/api-docs",
 swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-
 
 server.use(cors());
 

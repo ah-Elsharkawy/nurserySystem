@@ -7,11 +7,11 @@ const {getAllClasses, getClassById, addClass, updateClasses, deleteClassById, ge
 router.route("/class")
 .get(getAllClasses)
 .post(addClass)
-.put(updateClasses)
 
 router.route(`/class/:id`)
 .get(getClassById)
 .delete(deleteClassById)
+.put(updateClasses)
 
 router.get(`/classChildren/:id`, getClassChildren);
 router.get("/classTeacher/:id", getClassTeacher);

@@ -16,6 +16,11 @@ const Schema = mongoose.Schema({
     level: {type: String, enum:["PreKG", "KG1", "KG2"], required: true},
     address: addressSchema
 })
+Schema.set('toObject', { virtuals: true });
+Schema.set('toJSON', { virtuals: true });
 
+Schema.virtual('id').get(function() {
+    return this.cid;
+});
 Schema.plugin(AutoIncrement, { inc_field: 'cid' });
 module.exports = mongoose.model("children", Schema);
