@@ -132,7 +132,7 @@ module.exports.getClassTeacher = async(req, res, next)=>{
 
 module.exports.getClassChildren = async(req, res, next)=>{
     try{
-        let foundClass = await Class.findOne({classId: req.params.id}).populate("children", null, { cid: { $exists: true } }).exec();
+        let foundClass = await Class.findOne({classId: req.params.id})/* .populate("children", null, { cid: { $exists: true } }).exec(); */
 
         if(!foundClass)
             throw new Error("class doesn't exist");

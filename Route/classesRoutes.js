@@ -6,15 +6,16 @@ const {getAllClasses, getClassById, addClass, updateClasses, deleteClassById, ge
 const {validateClassData, checkClassIdInParams} = require("../MW/Validations/classValidation")
 
 const validator  = require("../MW/Validations/validator")
+const {isAdmin} = require("../MW/authMW")
 
 router.route("/class")
 .get(getAllClasses)
-.post(validateClassData, validator, addClass)
+.post(isAdmin, validateClassData, validator, addClass)
 
 router.route(`/class/:id`)
 .all(checkClassIdInParams, validator)
 .get(getClassById)
-.delete(deleteClassById)
+.delete(isAdmin, deleteClassById)
 .put(validateClassData, validator, updateClasses)
 
 router.get(`/classChildren/:id`,checkClassIdInParams, validator,  getClassChildren);

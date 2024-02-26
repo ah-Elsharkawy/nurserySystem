@@ -1,30 +1,32 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Nursery system",
+    "title": "Nursery System",
     "description": "Description",
     "version": "1.0.0"
   },
   "host": "localhost:8080",
   "basePath": "/",
-  "schemes": [
-    "http"
+  "schemes": ["http"],
+  "tags": [
+    { "name": "Login", "description": "Operations related to user login" },
+    { "name": "Teacher", "description": "Operations related to teachers" },
+    { "name": "Children", "description": "Operations related to children" },
+    { "name": "Class", "description": "Operations related to classes" },
+    { "name": "Password Reset", "description": "Operations related to password reset" }
   ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
   "paths": {
-    "/teachers": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
+    "/login": {
       "post": {
-        "description": "",
+        "tags": ["Login"],
+        "description": "Endpoint to authenticate users",
         "parameters": [
           {
             "name": "body",
@@ -32,238 +34,289 @@
             "schema": {
               "type": "object",
               "properties": {
-                "fullName": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
+                "email": { "type": "string", "example": "user@example.com" },
+                "password": { "type": "string", "example": "password123" }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "description": "Unauthorized" },
+          "422": { "description": "Unprocessable Entity" }
+        }
+      }
+    },
+    "/resetPassword/{id}": {
+      "post": {
+        "tags": ["Password Reset"],
+        "description": "Endpoint to reset user's password",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": { "newPassword": { "type": "string", "example": "newPassword123" } },
+              "required": ["newPassword"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "description": "Unauthorized" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/teachers": {
+      "get": {
+        "tags": ["Teacher"],
+        "description": "Get all teachers",
+        "responses": { "200": { "description": "OK" } },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "post": {
+        "tags": ["Teacher"],
+        "description": "Create a new teacher",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": { "type": "string", "example": "John Doe" },
+                "email": { "type": "string", "example": "teacher@example.com" },
+                "password": { "type": "string", "example": "password123" }
+              },
+              "required": ["fullName", "email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad Request" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/teachers/{id}": {
+      "get": {
+        "tags": ["Teacher"],
+        "description": "Get a teacher by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "delete": {
+        "tags": ["Teacher"],
+        "description": "Delete a teacher by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "patch": {
+        "tags": ["Teacher"],
+        "description": "Update a teacher by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": { "type": "string", "example": "John Doe" },
+                "email": { "type": "string", "example": "teacher@example.com" },
+                "password": { "type": "string", "example": "newPassword123" }
               }
             }
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      }
-    },
-    "/teachers/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        }
-      }
-    },
-    "/teachers/supervisors": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+          "201": { "description": "Created" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/class": {
       "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+        "tags": ["Class"],
+        "description": "Get all classes",
+        "responses": { "200": { "description": "OK" } },
+        "security": [{ "BearerAuth": [] }]
       },
       "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
+        "tags": ["Class"],
+        "description": "Create a new class",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "className": { "type": "string", "example": "Class A" },
+                "supervisor": { "type": "string", "example": "John Doe" },
+                "children": { "type": "array", "items": { "type": "number" }, "example": [1, 2, 3] }
+              },
+              "required": ["className", "supervisor"]
+            }
           }
-        }
-      },
-      "put": {
-        "description": "",
+        ],
         "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
+          "201": { "description": "Created" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/class/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Class"],
+        "description": "Get a class by ID",
         "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BearerAuth": [] }]
+      },
+      "put": {
+        "tags": ["Class"],
+        "description": "Update a class by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "className": { "type": "string", "example": "Class A" },
+                "supervisor": { "type": "string", "example": "John Doe" },
+                "children": { "type": "array", "items": { "type": "number" }, "example": [1, 2, 3] }
+              }
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+          "201": { "description": "Created" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       },
       "delete": {
-        "description": "",
+        "tags": ["Class"],
+        "description": "Delete a class by ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        }
+        "responses": { "204": { "description": "No Content" } },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/classChildren/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Children"],
+        "description": "Get children in a class by class ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+          "200": { "description": "OK" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/classTeacher/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Teacher"],
+        "description": "Get the teacher of a class by class ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+          "200": { "description": "OK" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/child": {
       "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+        "tags": ["Children"],
+        "description": "Get all children",
+        "responses": { "200": { "description": "OK" } },
+        "security": [{ "BearerAuth": [] }]
       },
       "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
+        "tags": ["Children"],
+        "description": "Create a new child",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": { "type": "string", "example": "John Doe" },
+                "age": { "type": "number", "example": 5 },
+                "level": { "type": "string", "example": "PreKG" },
+                "address": { "type": "string", "example": "123 Main St" }
+              },
+              "required": ["fullName", "age", "level", "address"]
+            }
           }
-        }
-      },
-      "put": {
-        "description": "",
+        ],
         "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
+          "201": { "description": "Created" },
+          "400": { "description": "Bad Request" },
+          "422": { "description": "Unprocessable Entity" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     },
     "/child/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Children"],
+        "description": "Get a child by ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
+          "200": { "description": "OK" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BearerAuth": [] }]
       },
       "delete": {
-        "description": "",
+        "tags": ["Children"],
+        "description": "Delete a child by ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        }
+          "204": { "description": "No Content" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{ "BearerAuth": [] }]
       }
     }
   }

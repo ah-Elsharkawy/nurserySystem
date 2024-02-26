@@ -7,14 +7,16 @@ const {validateChildData, checkChildIdInBody, checkChildIdInParams} = require(".
 
 const validator = require("../MW/Validations/validator")
 
+const {isAdmin} = require("../MW/authMW")
+
 router.route("/child")
 .get(getAllChilds)
-.post(validateChildData, validator, addChild)
+.post(isAdmin, validateChildData, validator, addChild)
 .put(validateChildData, checkChildIdInBody, validator,updateChilds)
 
 router.route("/child/:id")
 .all(checkChildIdInParams, validator)
 .get(getChildById)
-.delete(deleteChildById)
+.delete(isAdmin ,deleteChildById)
 
 module.exports = router;

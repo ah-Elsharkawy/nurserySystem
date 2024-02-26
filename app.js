@@ -3,10 +3,13 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const teachersRoutes = require("./Route/teacherRoutes");
 const classesRoutes = require("./Route/classesRoutes");
 const childrenRoutes = require("./Route/childsRoutes");
 const AuthRoute = require("./Route/authenticationRoute");
+const resetPasswordRoute = require("./Route/resetPasswordRoute")
+
 const server = express();
 const {addValidation} = require("./MW/Validations/teacherValidation");
 const validator = require("./MW/Validations/validator");
@@ -30,6 +33,7 @@ mongoose.connect(process.env.DB_URL)
 })
 
 
+
 server.use("/api-docs",
 swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -45,6 +49,7 @@ server.use(express.urlencoded({extended: true}));
 
 server.use(AuthRoute);
 server.use(authMW);
+server.use(resetPasswordRoute);
 server.use(teachersRoutes);
 server.use(classesRoutes);
 server.use(childrenRoutes);

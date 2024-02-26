@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken")
 
 module.exports = async(req, res, next) => {
+    console.log(req.headers);
     if(!req.get("authorization"))
     {
         let err = new Error("Not Authenticated");
@@ -23,7 +24,7 @@ module.exports = async(req, res, next) => {
 }
 
 module.exports.isAdmin = (req, res, next) =>{
-    if(req.token.role != "teacher")
+    if(req.token.role != "admin")
     {
         let err = new Error("Unauthorized");
         err.statusCode = 403;

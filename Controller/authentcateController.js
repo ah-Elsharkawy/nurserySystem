@@ -25,7 +25,10 @@ let login = async (req, res) => {
                 }
                 else
                 {
-                    let token = jwt.sign({_id: teacher._id, role: "teacher"},
+                    let role = "teacher";
+                    if(teacher.email === "admin@gmail.com")
+                        role = "admin";
+                    let token = jwt.sign({_id: teacher._id, role: role},
                     process.env.SECRET_KEY);
 
                     res.status(200).json({token: token});
